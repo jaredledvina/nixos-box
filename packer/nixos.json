@@ -1,0 +1,65 @@
+{
+    "variables": {
+        "series_release": "132155.b50443b5c4a",
+        "series": "18.03",
+        "iso_checksum": "19ae8c224c73b5580a3a514a1f7868e30f38e1f8b6fbe3f7bd075045310684b2",
+        "package_mirror": "https://mirror.wdc1.us.leaseweb.net/archlinux/$repo/os/$arch",
+        "vm_memory": "4096",
+        "vm_cpus": "2",
+        "ansible_extra_args": "--diff,-vv",
+        "root_password": "thisISaSECUREpassword12"
+    },
+	"builders": [{
+	  "type": "virtualbox-iso",
+	  "guest_os_type": "Linux_64",
+	  "iso_url": "https://d3g5gsiof5omrk.cloudfront.net/nixos/{{ user `series` }}/nixos-{{ user `series` }}.{{ user `series_release` }}/nixos-minimal-{{ user `series` }}.{{ user `series_release` }}-x86_64-linux.iso",
+      "iso_checksum": "19ae8c224c73b5580a3a514a1f7868e30f38e1f8b6fbe3f7bd075045310684b2",
+	  "iso_checksum_type": "sha256",
+	  "ssh_username": "root",
+	  "ssh_password": "{{ user `root_password` }}",
+	  "shutdown_command": "echo 'packer' | shutdown -P now",
+	  "hard_drive_interface": "sata",
+	  "iso_interface": "sata",
+      "guest_additions_mode": "disable",
+      "headless": true,
+      "boot_wait": "3s",
+      "boot_command": [
+        "<enter>",
+        "<wait10><wait10><wait5>",
+        "echo 'root:{{ user `root_password` }}' | chpasswd <enter>",
+        "systemctl start sshd <enter>"
+      ],
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "{{ user `vm_memory` }}"],
+        ["modifyvm", "{{.Name}}", "--cpus", "{{ user `vm_cpus` }}"],
+        ["modifyvm", "{{.Name}}", "--pae", "on"],
+        ["modifyvm", "{{.Name}}", "--vtxux", "on"]
+      ]
+	}],
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [
+          "nix-env --install --attr nixos.python27 nixos.ansible"
+        ]
+      },
+      {
+        "type": "ansible-local",
+        "playbook_file": "provisioning/bootstrap.yml",
+        "playbook_paths": ["provisioning/templates"],
+        "extra_arguments": "{{ user `ansible_extra_args` }}"
+      }
+    ],
+  "post-processors": [
+    {
+      "type": "checksum",
+      "checksum_types": ["sha256"],
+      "output": "nixos.box.checksum"
+    },
+    {
+      "type": "vagrant",
+      "output": "nixos.box",
+      "keep_input_artifact": false
+    }
+  ]
+}

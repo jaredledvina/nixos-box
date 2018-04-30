@@ -1,0 +1,63 @@
+---
+- hosts: localhost
+  vars:
+    ansible_python_interpreter: /root/.nix-profile/bin/python
+  gather_facts: no
+  tasks:
+    - name: Check if disk is already partitioned
+      command: parted --script /dev/sda print 1
+      register: boot_bios
+      changed_when: false
+      failed_when: false
+
+    - name: Create BIOS boot partition
+      command: "{{ item }}"
+      with_items:
+        - parted --script /dev/sda mklabel gpt
+        - parted --script /dev/sda mkpart primary 0M 1M
+        - parted --script /dev/sda set 1 bios_grub on
+      when: boot_bios.rc != 0
+
+    - name: Check if disk is already partitioned
+      command: parted --script /dev/sda print 2
+      register: boot_root
+      changed_when: false
+      failed_when: false
+
+    - name: Partition root disk
+      command: "{{ item }}"
+      with_items:
+        - parted --script /dev/sda mkpart primary btrfs 1M 100%
+        - parted --script /dev/sda set 2 boot on
+      when: boot_root.rc != 0
+
+    - name: Check if /dev/sda2 is already formated
+      command: df --output=fstype /dev/sda2
+      register: boot_fstype
+      changed_when: false
+      failed_when: false
+
+    - name: Format root disk
+      command: mkfs.btrfs -L ROOTFS /dev/sda2
+      when: "'btrfs' not in boot_fstype.stdout"
+
+    - name: Mount root disk
+      mount:
+        path: /mnt
+        src: /dev/sda2
+        state: mounted
+        fstab: /etc/fstab-junk
+        fstype: btrfs
+
+    - name: Bootstrap new NixOS configuration
+      command: nixos-generate-config --root /mnt
+      args:
+        creates: /mnt/etc/nixos/configuration.nix
+
+    - name: Update the NixOS configuuration
+      template:
+        src: playbooks/templates/configuration.nix.j2
+        dest: /mnt/etc/nixos/configuration.nix
+
+    - name: Install NixOS
+      shell: nixos-install

@@ -1,0 +1,7 @@
+.vagrant
+packer/*.box*
+packer/packer_cache
+packer/packer_virtualbox-iso_virtualbox.box
+packer/output-virtualbox-iso
+.DS_Store
+*.swp
