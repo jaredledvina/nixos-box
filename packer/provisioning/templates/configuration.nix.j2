@@ -24,9 +24,12 @@
   time.timeZone = "America/New_York";
 
   environment.systemPackages = with pkgs; [
-    wget vim tmux linuxPackages.virtualboxGuestAdditions
+    dnsutils wget vim tmux linuxPackages.virtualboxGuestAdditions
   ];
 
+  services.resolved.enable = true;
+  services.resolved.fallbackDns = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ]
+  services.resolved.dnssec = "true";
   programs.bash.enableCompletion = true;
   services.openssh.enable = true;
   security.sudo.wheelNeedsPassword = false;
