@@ -1,8 +1,8 @@
 {
     "variables": {
-        "series_release": "132155.b50443b5c4a",
-        "series": "18.03",
-        "iso_checksum": "19ae8c224c73b5580a3a514a1f7868e30f38e1f8b6fbe3f7bd075045310684b2",
+        "series_release": "2375.680f9d7ea90",
+        "series": "18.09",
+        "iso_checksum": "201ddb6cfca5a2f3c14eade0d0c25f367e6029cbe9962bb6263d392a9b197a23",
         "vm_memory": "4096",
         "vm_cpus": "2",
         "ansible_extra_args": "--diff,-vv",
