@@ -3,7 +3,6 @@
         "series_release": "132155.b50443b5c4a",
         "series": "18.03",
         "iso_checksum": "19ae8c224c73b5580a3a514a1f7868e30f38e1f8b6fbe3f7bd075045310684b2",
-        "package_mirror": "https://mirror.wdc1.us.leaseweb.net/archlinux/$repo/os/$arch",
         "vm_memory": "4096",
         "vm_cpus": "2",
         "ansible_extra_args": "--diff,-vv",
