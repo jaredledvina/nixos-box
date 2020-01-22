@@ -1,8 +1,8 @@
 {
     "variables": {
-        "series_release": "2375.680f9d7ea90",
-        "series": "18.09",
-        "iso_checksum": "201ddb6cfca5a2f3c14eade0d0c25f367e6029cbe9962bb6263d392a9b197a23",
+        "series_release": "1927.0fe895ae112",
+        "series": "19.09",
+        "iso_checksum": "8fc57c17047f272f70485e25327069c7bb08b464cecd9c68c009f5774f739485",
         "vm_memory": "4096",
         "vm_cpus": "2",
         "ansible_extra_args": "--diff,-vv",
@@ -12,7 +12,7 @@
 	  "type": "virtualbox-iso",
 	  "guest_os_type": "Linux_64",
 	  "iso_url": "https://d3g5gsiof5omrk.cloudfront.net/nixos/{{ user `series` }}/nixos-{{ user `series` }}.{{ user `series_release` }}/nixos-minimal-{{ user `series` }}.{{ user `series_release` }}-x86_64-linux.iso",
-      "iso_checksum": "19ae8c224c73b5580a3a514a1f7868e30f38e1f8b6fbe3f7bd075045310684b2",
+          "iso_checksum": "{{ user `iso_checksum` }}",
 	  "iso_checksum_type": "sha256",
 	  "ssh_username": "root",
 	  "ssh_password": "{{ user `root_password` }}",
